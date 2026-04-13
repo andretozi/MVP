@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArchiDocs - Dashboard</title>
+    <title>MVP - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -20,7 +20,7 @@
             <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
                 <i data-lucide="folder-git-2" class="w-7 h-7 text-blue-600"></i>
                 <div>
-                    <h1 class="text-base font-bold text-slate-900 leading-tight">ArchiDocs</h1>
+                    <h1 class="text-base font-bold text-slate-900 leading-tight">MVP</h1>
                     <p class="text-[11px] text-slate-500">Módulo 2 • MVP</p>
                 </div>
             </div>
@@ -60,46 +60,86 @@
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">AP</div>
                 <div class="overflow-hidden">
-                    <p class="text-xs font-bold text-slate-800 truncate">Arquiteto Principal</p>
+                    <p class="text-xs font-bold text-slate-800 truncate">Usuário</p>
                     <a href="/" class="text-[10px] text-red-500 font-medium hover:underline mt-0.5 inline-block">Sair do sistema</a>
                 </div>
             </div>
         </div>
     </aside>
 
-    <main class="flex-1 overflow-hidden p-8 flex flex-col">
+    <main class="flex-1 overflow-hidden p-8 flex flex-col relative">
 
         <div id="tab-projetos" class="tab-content active">
+
             <div class="flex justify-between items-end mb-8 shrink-0">
                 <div>
                     <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Meus Projetos</h2>
                     <p class="text-slate-500 text-sm mt-1">Gerencie sua base de conhecimento técnico</p>
                 </div>
-                <button onclick="switchTab('upload')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm transition-all flex items-center gap-2">
-                    <i data-lucide="upload" class="w-4 h-4"></i> Novo Arquivo
-                </button>
+                <div class="flex gap-3">
+                    <button onclick="abrirModalProjeto()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm transition-all flex items-center gap-2">
+                        <i data-lucide="folder-plus" class="w-4 h-4"></i> Novo Projeto
+                    </button>
+                    <button onclick="switchTab('upload')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm transition-all flex items-center gap-2">
+                        <i data-lucide="upload" class="w-4 h-4"></i> Novo Arquivo
+                    </button>
+                </div>
             </div>
 
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex-1 flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                     <div class="relative w-64">
                         <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
-                        <input type="text" placeholder="Filtrar arquivos..." class="w-full bg-white border border-slate-200 rounded-lg pl-9 py-2 text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                        <input type="text" placeholder="Filtrar..." class="w-full bg-white border border-slate-200 rounded-lg pl-9 py-2 text-xs focus:ring-1 focus:ring-blue-500 outline-none">
                     </div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Arquivos no Servidor</span>
                 </div>
 
-                <div id="project-file-list" class="p-6 space-y-3 overflow-y-auto flex-1">
-                    <div id="empty-state" class="h-full flex flex-col items-center justify-center text-center opacity-40">
-                        <i data-lucide="inbox" class="w-12 h-12 mb-3"></i>
-                        <p class="text-sm font-medium">Nenhum documento processado nesta branch</p>
+                <div id="view-projetos" class="p-6 overflow-y-auto flex-1 bg-slate-50/50">
+                    <div id="empty-projetos" class="h-full flex flex-col items-center justify-center text-center opacity-40">
+                        <i data-lucide="layout-grid" class="w-16 h-16 mb-3"></i>
+                        <h3 class="text-lg font-bold text-slate-700">Nenhum projeto criado</h3>
+                        <p class="text-sm font-medium">Clique em "Novo Projeto" para começar.</p>
                     </div>
+                    <div id="grid-projetos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                        </div>
+                </div>
+
+                <div id="view-arquivos" class="p-6 overflow-y-auto flex-1 hidden flex-col">
+                    <button onclick="voltarParaProjetos()" class="text-blue-600 hover:text-blue-800 font-bold text-sm flex items-center gap-2 mb-6 w-fit transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+                    </button>
+
+                    <div class="mb-6 pb-4 border-b border-slate-100 flex justify-between items-start">
+                        <div>
+                            <h3 id="detalhe-nome-projeto" class="text-2xl font-bold text-slate-800 tracking-tight">Nome do Projeto</h3>
+                            <p id="detalhe-equipe-projeto" class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4"></i> <span>Equipe</span>
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <a id="detalhe-github-projeto" href="#" target="_blank" class="hidden items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-all">
+                                <i data-lucide="github" class="w-4 h-4"></i> Acessar Repositório
+                            </a>
+                            <button id="btn-upload-direto" class="hidden items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-all shadow-sm">
+                                <i data-lucide="upload-cloud" class="w-4 h-4"></i> Adicionar Arquivo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="empty-arquivos" class="flex-1 flex flex-col items-center justify-center text-center opacity-40">
+                        <i data-lucide="folder-open" class="w-12 h-12 mb-3"></i>
+                        <p class="text-sm font-medium">Projeto vazio. Clique em "Adicionar Arquivo" para popular.</p>
+                    </div>
+
+                    <div id="lista-arquivos" class="space-y-3">
+                        </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-upload" class="tab-content max-w-3xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-slate-900 mb-8 shrink-0">Novo Upload</h2>
+            <h2 class="text-3xl font-bold text-slate-900 mb-8 shrink-0 tracking-tight">Novo Upload</h2>
 
             <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">
                 <form id="uploadForm" class="space-y-6">
@@ -113,9 +153,16 @@
                     </div>
 
                     <div class="grid grid-cols-4 gap-4">
+                        <div class="col-span-4">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-2">Vincular Projeto</label>
+                            <select id="projectSelect" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" required>
+                                <option value="" disabled selected>Selecione um projeto...</option>
+                            </select>
+                        </div>
+
                         <div class="col-span-3">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase mb-2">Nome de Exibição</label>
-                            <input type="text" id="docName" placeholder="Ex: Diagrama de Carga v1" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                            <input type="text" id="docName" placeholder="Peenchimento automático ao enviar arquivo" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                         </div>
                         <div class="col-span-1 text-center">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase mb-2">Tipo</label>
@@ -127,7 +174,7 @@
 
                     <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
                         <input type="checkbox" id="isPublic" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                        <label for="isPublic" class="text-xs font-semibold text-slate-600 cursor-pointer">Compartilhar na aba "Público" para outros arquitetos da rede</label>
+                        <label for="isPublic" class="text-xs font-semibold text-slate-600 cursor-pointer">Compartilhar na aba "Público" para outros usuários</label>
                     </div>
 
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-3">
@@ -140,26 +187,8 @@
         <div id="tab-publico" class="tab-content max-w-5xl mx-auto w-full">
             <h2 class="text-3xl font-bold text-slate-900 mb-2 shrink-0 tracking-tight">Arquivos da Comunidade</h2>
             <p class="text-slate-500 text-sm mb-8">Inspire-se em arquiteturas compartilhadas por outros usuários</p>
-
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex-1 p-8 overflow-hidden flex flex-col">
-                <div class="relative mb-6 shrink-0">
-                    <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-slate-400"></i>
-                    <input type="text" placeholder="Buscar por tema (ex: Pagamento, AWS, Microsserviços)..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="space-y-4 overflow-y-auto flex-1 pr-2">
-                    <div class="p-5 border border-slate-100 rounded-xl bg-slate-50/50 flex items-center justify-between group hover:border-blue-200 transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-black text-xs text-orange-500 shadow-sm uppercase italic">PDF</div>
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm leading-none">Arquitetura Micro-frontend</h4>
-                                <p class="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
-                                    <i data-lucide="user" class="w-3 h-3"></i> Arquiteta: Mariana Silva • Banco Digital S/A
-                                </p>
-                            </div>
-                        </div>
-                        <button class="text-[10px] font-bold bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 transition-all uppercase tracking-tighter">Baixar Cópia</button>
-                    </div>
-                </div>
+                <p class="text-slate-400 text-center mt-10">Comunidade em breve.</p>
             </div>
         </div>
 
@@ -169,7 +198,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
                 </div>
                 <h3 class="text-2xl font-black text-slate-800 mb-2 tracking-tight">Conecte seus Repositórios</h3>
-                <p class="text-sm text-slate-500 leading-relaxed mb-8">Ao vincular o GitHub, nossa IA cruzará as definições técnicas dos documentos com os Pull Requests do time.</p>
+                <p class="text-sm text-slate-500 leading-relaxed mb-8">A IA cruzará as definições técnicas dos documentos com os Pull Requests do time.</p>
                 <button class="bg-slate-900 text-white font-bold py-3 px-8 rounded-xl flex items-center gap-3 hover:scale-105 transition-all shadow-lg shadow-slate-200">
                     <i data-lucide="link" class="w-4 h-4"></i> Autorizar GitHub OAuth
                 </button>
@@ -179,33 +208,52 @@
         <div id="tab-config" class="tab-content max-w-3xl mx-auto w-full">
             <h2 class="text-3xl font-bold text-slate-900 mb-8 shrink-0">Configurações</h2>
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-10">
-                <section>
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Preferências de Análise</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <div>
-                                <p class="text-sm font-bold text-slate-700 leading-none">Auto-Tagging (IA)</p>
-                                <p class="text-[10px] text-slate-400 mt-1 italic">Gerar palavras-chave baseado no conteúdo do documento</p>
-                            </div>
-                            <div class="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer"><div class="w-3.5 h-3.5 bg-white rounded-full absolute top-0.5 right-0.5"></div></div>
-                        </div>
-                    </div>
-                </section>
+                <p class="text-slate-400">Preferências.</p>
             </div>
         </div>
-
     </main>
+
+    <div id="modalProjeto" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-lg tracking-tight">Criar Novo Projeto</h3>
+                <button onclick="fecharModalProjeto()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Nome do Projeto <span class="text-red-500">*</span></label>
+                    <input type="text" id="inputNovoProjeto" class="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Vincular Equipe</label>
+                    <input type="text" id="inputEquipeProjeto" placeholder="joao@empresa.com" class="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">GitHub (Opcional)</label>
+                    <div class="relative">
+                        <i data-lucide="github" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                        <input type="url" id="inputGithubProjeto" placeholder="https://github.com/..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                    </div>
+                </div>
+                <button onclick="salvarProjeto()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-all flex justify-center items-center gap-2 mt-4 shadow-md">
+                    <i data-lucide="save" class="w-4 h-4"></i> Criar Projeto
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
 
+        // NAVEGAÇÃO
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => {
                 el.classList.remove('bg-blue-50', 'text-blue-700');
                 el.classList.add('text-slate-600');
             });
-
             document.getElementById('tab-' + tabId).classList.add('active');
             const activeBtn = document.getElementById('nav-' + tabId);
             if(activeBtn) {
@@ -214,13 +262,171 @@
             }
         }
 
+        // --- NOVA FUNÇÃO: UPLOAD DIRETO DO PROJETO ---
+        function irParaUploadDoProjeto(idProjeto) {
+            switchTab('upload');
+            const select = document.getElementById('projectSelect');
+            select.value = idProjeto; // Pré-seleciona a lista suspensa
+        }
+
+        // LÓGICA DE PROJETOS E ARQUIVOS
+        let listaDeProjetos = [];
+
+        function abrirModalProjeto() {
+            document.getElementById('modalProjeto').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function fecharModalProjeto() {
+            document.getElementById('modalProjeto').classList.add('hidden');
+            document.getElementById('inputNovoProjeto').value = '';
+            document.getElementById('inputEquipeProjeto').value = '';
+            document.getElementById('inputGithubProjeto').value = '';
+        }
+
+        function salvarProjeto() {
+            const nomeProjeto = document.getElementById('inputNovoProjeto').value.trim();
+            const equipeProjeto = document.getElementById('inputEquipeProjeto').value.trim();
+            const githubProjeto = document.getElementById('inputGithubProjeto').value.trim();
+
+            if (!nomeProjeto) return alert("Digite o nome do projeto!");
+
+            const idProjeto = Date.now().toString();
+            listaDeProjetos.push({
+                id: idProjeto,
+                nome: nomeProjeto,
+                equipe: equipeProjeto || "Apenas você",
+                github: githubProjeto,
+                arquivos: []
+            });
+
+            atualizarSelectProjetos();
+            renderizarGridProjetos();
+            fecharModalProjeto();
+        }
+
+        function atualizarSelectProjetos() {
+            const select = document.getElementById('projectSelect');
+            select.innerHTML = '<option value="" disabled selected>Selecione um projeto...</option>';
+            listaDeProjetos.forEach(projeto => {
+                select.innerHTML += `<option value="${projeto.id}">${projeto.nome}</option>`;
+            });
+        }
+
+        function renderizarGridProjetos() {
+            const grid = document.getElementById('grid-projetos');
+            const empty = document.getElementById('empty-projetos');
+
+            if (listaDeProjetos.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+
+            listaDeProjetos.forEach(projeto => {
+                const qtdArquivos = projeto.arquivos.length;
+                const iconGithub = projeto.github ? `<i data-lucide="github" class="w-4 h-4 text-slate-400"></i>` : '';
+                grid.innerHTML += `
+                    <div onclick="abrirDetalhesProjeto('${projeto.id}')" class="bg-white border border-slate-200 rounded-xl p-5 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <i data-lucide="folder" class="w-5 h-5"></i>
+                            </div>
+                            ${iconGithub}
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-1 truncate">${projeto.nome}</h3>
+                        <p class="text-[10px] text-slate-400 mb-4 truncate font-medium uppercase tracking-widest">${projeto.equipe}</p>
+                        <div class="pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
+                            <span class="text-slate-500 font-bold">${qtdArquivos} arquivo(s)</span>
+                            <span class="text-blue-600 font-bold group-hover:underline text-xs uppercase tracking-tight">Acessar</span>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function abrirDetalhesProjeto(idProjeto) {
+            const projeto = listaDeProjetos.find(p => p.id === idProjeto);
+            if(!projeto) return;
+
+            document.getElementById('view-projetos').classList.add('hidden');
+            document.getElementById('view-arquivos').classList.remove('hidden');
+            document.getElementById('view-arquivos').classList.add('flex');
+
+            document.getElementById('detalhe-nome-projeto').innerText = projeto.nome;
+            document.getElementById('detalhe-equipe-projeto').innerHTML = `<i data-lucide="users" class="w-4 h-4"></i> <span>${projeto.equipe}</span>`;
+
+            const btnGit = document.getElementById('detalhe-github-projeto');
+            if(projeto.github) {
+                btnGit.href = projeto.github;
+                btnGit.classList.remove('hidden');
+                btnGit.classList.add('flex');
+            } else {
+                btnGit.classList.add('hidden');
+                btnGit.classList.remove('flex');
+            }
+
+            // ATIVA O BOTÃO DE UPLOAD PARA ESTE PROJETO
+            const btnUpload = document.getElementById('btn-upload-direto');
+            btnUpload.onclick = () => irParaUploadDoProjeto(idProjeto);
+            btnUpload.classList.remove('hidden');
+            btnUpload.classList.add('flex');
+
+            renderizarArquivosDoProjeto(projeto);
+        }
+
+        function voltarParaProjetos() {
+            document.getElementById('view-arquivos').classList.add('hidden');
+            document.getElementById('view-arquivos').classList.remove('flex');
+            document.getElementById('view-projetos').classList.remove('hidden');
+            renderizarGridProjetos();
+        }
+
+        function renderizarArquivosDoProjeto(projeto) {
+            const lista = document.getElementById('lista-arquivos');
+            const empty = document.getElementById('empty-arquivos');
+
+            if (projeto.arquivos.length === 0) {
+                lista.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            lista.innerHTML = '';
+
+            projeto.arquivos.forEach(arq => {
+                lista.innerHTML += `
+                    <div class="p-4 bg-white border border-slate-100 rounded-xl flex items-center justify-between group hover:border-blue-200 transition-all shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 italic uppercase">
+                                ${arq.ext}
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 leading-none">${arq.nome} ${arq.badge}</h4>
+                                <p class="text-[10px] text-emerald-600 mt-2 font-bold uppercase tracking-tight">✨ IA: ${arq.ia}</p>
+                            </div>
+                        </div>
+                        <a href="${arq.url}" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // LÓGICA DE UPLOAD INTEGRADA COM FLASK
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
         const docNameInput = document.getElementById('docName');
         const extBadge = document.getElementById('extBadge');
         const uploadForm = document.getElementById('uploadForm');
-        const projectFileList = document.getElementById('project-file-list');
-        const emptyState = document.getElementById('empty-state');
 
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -249,20 +455,25 @@
         uploadForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const file = fileInput.files[0];
-            if (!file) { alert("Ops! Selecione um arquivo primeiro."); return; }
-            if (!docNameInput.value) { alert("Dê um nome ao seu documento."); return; }
+            const idProjetoSelecionado = document.getElementById('projectSelect').value;
+
+            if (!file) return alert("Selecione um arquivo primeiro.");
+            if (!docNameInput.value) return alert("Dê um nome ao documento.");
+            if (!idProjetoSelecionado) return alert("Você precisa criar e selecionar um projeto!");
 
             const btn = uploadForm.querySelector('button[type="submit"]');
             const originalBtnText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Processando...`;
+            btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Processando IA...`;
             lucide.createIcons();
 
             const formData = new FormData();
             formData.append('file', file);
             formData.append('docName', docNameInput.value);
+            formData.append('projetoId', idProjetoSelecionado);
             formData.append('isPublic', document.getElementById('isPublic').checked);
 
             try {
+                // ENVIA PARA O PYTHON FLASK
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
@@ -271,31 +482,17 @@
                 const data = await response.json();
 
                 if (data.sucesso) {
-                    const badgePublico = data.publico ? `<span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-black rounded ml-2 uppercase tracking-tight">Compartilhado</span>` : '';
+                    const projetoDestino = listaDeProjetos.find(p => p.id === data.projetoId);
+                    const badgePublico = data.publico ? `<span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-black rounded ml-2 uppercase tracking-tight">Público</span>` : '';
 
-                    // AQUI ESTÁ A MÁGICA DO ARQUIVO: Acessando a rota /uploads/ que criamos no Flask
-                    const fileUrl = '/uploads/' + data.nomeArquivo;
-
-                    const cardHtml = `
-                        <div class="p-4 bg-white border border-slate-100 rounded-xl flex items-center justify-between group hover:border-blue-200 transition-all shadow-sm">
-                            <div class="flex items-center gap-4">
-                                <div class="w-11 h-11 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 italic uppercase">
-                                    ${data.extensao}
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold text-slate-800 leading-none">${data.nomeDocumento} ${badgePublico}</h4>
-                                    <p class="text-[10px] text-slate-400 mt-2 italic font-medium">Original: ${data.nomeArquivo} • IA Confidence: 99.2%</p>
-                                </div>
-                            </div>
-                            <a href="${fileUrl}" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-                    `;
-
-                    if(emptyState) emptyState.style.display = 'none';
-                    projectFileList.insertAdjacentHTML('afterbegin', cardHtml);
-                    lucide.createIcons();
+                    // Salva dentro da pasta correta usando os dados do Python!
+                    projetoDestino.arquivos.push({
+                        nome: data.nomeDocumento,
+                        ext: data.extensao,
+                        ia: data.classificacaoIA,
+                        badge: badgePublico,
+                        url: '/uploads/' + data.nomeArquivo // Rota do Flask para abrir o arquivo
+                    });
 
                     uploadForm.reset();
                     extBadge.innerText = '---';
@@ -306,10 +503,14 @@
                         <p class="text-sm font-bold text-slate-700">Selecione o artefato técnico</p>
                     `;
                     lucide.createIcons();
+
                     switchTab('projetos');
+                    abrirDetalhesProjeto(data.projetoId);
+                } else {
+                    alert(data.erro);
                 }
             } catch (err) {
-                alert("Falha ao comunicar com o servidor Python.");
+                alert("Falha ao comunicar com o servidor Python. Ele está rodando?");
             } finally {
                 btn.innerHTML = originalBtnText;
                 lucide.createIcons();
