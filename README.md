@@ -1,7 +1,7 @@
 # ArchiDocs: Plataforma de Documentação Inteligente
 
-> **Disciplina:** Projeto de Engenharia de Software
-> **Instituição:** Universidade Presbiteriana Mackenzie
+> **Disciplina:** Projeto de Engenharia de Software,
+> **Instituição:** Universidade Presbiteriana Mackenzie,
 > **Semestre:** 2026-1
 
 ## Visão Geral do Projeto
